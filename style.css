@@ -1,10 +1,40 @@
-body {
+* {
   margin: 0;
+  padding: 0;
 }
 
 .root {
   width: 100vw;
   height: 100vh;
-  background: #ccc;
+  background: #1c1c25;
   display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.header {
+  margin: 20px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-style: italic;
+  font-family: "Poppins", sans-serif;
+  color: #fff;
+}
+
+.title {
+  font-size: 3rem;
+  color: #00ffe7;
+  text-shadow: 0 0 10px #00a1ff, 0 0 30px #00a1ff;
+}
+
+.info {
+  margin-top: 10px;
+}
+
+.info p {
+  padding: 5px;
+  font-size: 1.25rem;
+  font-weight: bold;
 }
