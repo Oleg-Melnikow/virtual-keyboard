@@ -13,7 +13,20 @@ header.innerHTML = `
 </div>
 `;
 
+const sectionElement = document.createElement("section");
+sectionElement.classList.add("virtualKeyboard");
+
+const textarea = document.createElement("textarea");
+textarea.setAttribute("id", "textarea");
+
+const keyboard = document.createElement("div");
+keyboard.setAttribute("id", "keyboard");
+
+sectionElement.append(textarea);
+sectionElement.append(keyboard);
+
 rootElement.append(header);
+rootElement.append(sectionElement);
 bodyElement.append(rootElement);
 
 console.log(bodyElement);
