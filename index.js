@@ -232,26 +232,32 @@ const keys = [
   {
     key: ";",
     code: "Semicolon",
+    shift: ":",
   },
   {
     key: "=",
     code: "Equal",
+    shift: "+",
   },
   {
     key: ",",
     code: "Comma",
+    shift: "<",
   },
   {
     key: "-",
     code: "Minus",
+    shift: "_",
   },
   {
     key: ".",
     code: "Period",
+    shift: ">",
   },
   {
     key: "/",
     code: "Slash",
+    shift: "?",
   },
   {
     key: "`",
@@ -266,6 +272,7 @@ const keys = [
   {
     key: "\\",
     code: "Backslash",
+    shift: "|",
   },
   {
     key: "]",
@@ -312,9 +319,14 @@ bodyElement.append(rootElement);
 
 let properties = {
   isCaps: false,
+  keysPressed: {},
 };
 
-const enterKeys = (key, code = "") => {
+const isEnterShift =
+  properties.keysPressed?.ShiftLeft || properties.keysPressed?.ShiftRight;
+
+const enterKeys = (key, code = "", shiftKey = false) => {
+  console.log(code, key);
   switch (key) {
     case "Backspace":
       textarea.value = textarea.value.slice(0, -1);
@@ -337,9 +349,14 @@ const enterKeys = (key, code = "") => {
       break;
     default:
       if (code.includes("Key")) {
-        textarea.value += properties.isCaps
-          ? key.toUpperCase()
-          : key.toLowerCase();
+        if (properties.isCaps && shiftKey) {
+          textarea.value += key.toLowerCase();
+        } else {
+          textarea.value +=
+            properties.isCaps || shiftKey
+              ? key.toUpperCase()
+              : key.toLowerCase();
+        }
       } else {
         textarea.value += key;
       }
@@ -386,13 +403,32 @@ const switchCaps = (key) => {
   }
 };
 
-const onMouseUp = (key, event) => {
+const shiftPress = (isShift, code) => {
+  const keysShift = [...document.querySelectorAll(".keyItem-shift")];
+
+  keysShift.forEach((item) => {
+    item.innerHTML = isShift ? item?.dataset?.shift : item.dataset.key;
+  });
+
+  if (isShift) {
+    properties.keysPressed[code] = true;
+    changeCaseLetters(isShift && !properties.isCaps);
+  } else {
+    delete properties.keysPressed[code];
+    changeCaseLetters(properties.isCaps);
+  }
+};
+
+const onMouseUp = (key, event, code) => {
   if (key !== "CapsLock") {
     event.target.classList.remove("active");
   } else {
     if (!properties.isCaps) {
       event.target.classList.remove("active");
     }
+  }
+  if (code.includes("Shift")) {
+    shiftPress(false, code);
   }
 };
 
@@ -407,20 +443,33 @@ keysBoard.forEach((el) => {
   elementKey.setAttribute("data-key", key);
   elementKey.classList.add(code);
 
+  if (el?.shift) {
+    elementKey.classList.add("keyItem-shift");
+    elementKey.setAttribute("data-shift", el?.shift);
+  }
+
   setKey(elementKey, key);
 
   elementKey.addEventListener("mousedown", (event) => {
     event.target.classList.add("active");
-    enterKeys(key, code);
     switchCaps(key);
+    console.log(event.shiftKey);
+    if (event.shiftKey) {
+      enterKeys(el?.shift || key, code, event.shiftKey);
+    } else {
+      enterKeys(key, code);
+    }
+    if (code.includes("Shift")) {
+      shiftPress(true, code);
+    }
   });
 
   elementKey.addEventListener("mouseup", (event) => {
-    onMouseUp(key, event);
+    onMouseUp(key, event, code);
   });
 
   elementKey.addEventListener("mouseout", (event) => {
-    onMouseUp(key, event);
+    onMouseUp(key, event, code);
   });
 
   keyboard.append(elementKey);
@@ -428,6 +477,7 @@ keysBoard.forEach((el) => {
 
 window.addEventListener("keydown", (event) => {
   event.preventDefault();
+  properties.keysPressed[event.code] = true;
 
   const keyPress = document.querySelector(`.${event.code}`);
   if (keyPress) {
@@ -435,10 +485,22 @@ window.addEventListener("keydown", (event) => {
       keyPress.classList.add("active");
     }
 
+    // press shift
+    if (event.code.includes("Shift")) {
+      shiftPress(true, event.code);
+    }
+
     if (event.code === "CapsLock") {
       switchCaps(event.code);
     } else {
-      enterKeys(keyPress.dataset.key);
+      const isShiftPress =
+        event.shiftKey ||
+        properties.keysPressed?.ShiftLeft ||
+        properties.keysPressed?.ShiftRight;
+      const keyValue = isShiftPress
+        ? keyPress.dataset.shift || keyPress.dataset.key
+        : keyPress.dataset.key;
+      enterKeys(keyValue);
     }
   }
 });
@@ -448,6 +510,9 @@ window.addEventListener("keyup", (event) => {
 
   const keyPress = document.querySelector(`.${event.code}`);
   if (keyPress) {
+    if (event.code.includes("Shift")) {
+      shiftPress(false, event.code);
+    }
     if (event.code !== "CapsLock") {
       keyPress?.classList.remove("active");
     } else {
