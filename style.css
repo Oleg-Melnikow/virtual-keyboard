@@ -40,7 +40,7 @@
   font-weight: bold;
 }
 
-.virtualKeyboard {
+.virtual-keyboard {
   display: flex;
   flex-direction: column;
   align-items: center;

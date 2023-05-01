@@ -295,7 +295,7 @@ header.innerHTML = `
 `;
 
 const sectionElement = document.createElement("section");
-sectionElement.classList.add("virtualKeyboard");
+sectionElement.classList.add("virtual-keyboard");
 
 const textarea = document.createElement("textarea");
 textarea.setAttribute("id", "textarea");
@@ -310,7 +310,11 @@ rootElement.append(header);
 rootElement.append(sectionElement);
 bodyElement.append(rootElement);
 
-const enterKeys = (key) => {
+let properties = {
+  isCaps: false,
+};
+
+const enterKeys = (key, code = "") => {
   switch (key) {
     case "Backspace":
       textarea.value = textarea.value.slice(0, -1);
@@ -332,7 +336,13 @@ const enterKeys = (key) => {
     case "Win":
       break;
     default:
-      textarea.value += key;
+      if (code.includes("Key")) {
+        textarea.value += properties.isCaps
+          ? key.toUpperCase()
+          : key.toLowerCase();
+      } else {
+        textarea.value += key;
+      }
   }
 };
 
@@ -357,6 +367,35 @@ const setKey = (element, key) => {
   element.innerText = keySymbol;
 };
 
+const changeCaseLetters = (isCaps) => {
+  const keysLetter = [...document.querySelectorAll("[class*=Key]")];
+  keysLetter.forEach((el) => {
+    const itemKey = isCaps
+      ? el.dataset.key.toUpperCase()
+      : el.dataset.key.toLowerCase();
+    el.dataset.key = itemKey;
+    el.innerHTML = itemKey;
+  });
+};
+
+const switchCaps = (key) => {
+  if (key === "CapsLock") {
+    const isCaps = !properties.isCaps;
+    properties.isCaps = isCaps;
+    changeCaseLetters(isCaps);
+  }
+};
+
+const onMouseUp = (key, event) => {
+  if (key !== "CapsLock") {
+    event.target.classList.remove("active");
+  } else {
+    if (!properties.isCaps) {
+      event.target.classList.remove("active");
+    }
+  }
+};
+
 const keysBoard = keys.sort(
   (a, b) => keyLayout.indexOf(a.key) - keyLayout.indexOf(b.key)
 );
@@ -372,11 +411,16 @@ keysBoard.forEach((el) => {
 
   elementKey.addEventListener("mousedown", (event) => {
     event.target.classList.add("active");
-    enterKeys(key);
+    enterKeys(key, code);
+    switchCaps(key);
   });
 
   elementKey.addEventListener("mouseup", (event) => {
-    event.target.classList.remove("active");
+    onMouseUp(key, event);
+  });
+
+  elementKey.addEventListener("mouseout", (event) => {
+    onMouseUp(key, event);
   });
 
   keyboard.append(elementKey);
