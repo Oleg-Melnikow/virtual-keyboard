@@ -60,10 +60,91 @@
 }
 
 #keyboard {
+  display: flex;
+  flex-wrap: wrap;
   margin-top: 20px;
   border: 3px solid #000;
   border-radius: 10px;
-  width: 720px;
-  height: 260px;
+  width: 845px;
   background: #1b1b1b;
+  padding: 5px;
+  gap: 5px;
+}
+
+.keyItem {
+  min-width: 50px;
+  height: 50px;
+  background: #101010;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 3px solid #000;
+  box-sizing: border-box;
+  border-radius: 10px;
+  transition: 1s;
+  font-size: 20px;
+  color: #777;
+}
+
+.keyItem:hover {
+  cursor: pointer;
+}
+
+.keyItem.Backspace {
+  width: 130px;
+}
+
+.keyItem.Tab {
+  width: 75px;
+}
+
+.keyItem.CapsLock {
+  width: 130px;
+  position: relative;
+}
+
+.keyItem.CapsLock::after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 5px;
+  height: 5px;
+  background: #777;
+  border-radius: 50%;
+}
+
+.keyItem.CapsLock.active::after {
+  background: #00ffe7;
+  text-shadow: 0 0 10px #00a1ff, 0 0 30px #00a1ff;
+}
+
+.keyItem.Enter {
+  width: 105px;
+}
+
+.keyItem.ShiftLeft,
+.keyItem.ShiftRight {
+  width: 117.5px;
+}
+
+.keyItem.Space {
+  width: 380px;
+}
+
+.keyItem.ControlLeft,
+.keyItem.ControlRight {
+  width: 62.5px;
+}
+
+.active {
+  color: #fff;
+  text-shadow: 0 0 10px rgba(33, 156, 243, 1),
+    0 0 10px rgba(33, 156, 243, 1);
+  border: 3px solid #fff;
+  box-shadow: 0 0 10px rgba(33, 156, 243, .5),
+    0 0 20px rgba(33, 156, 243, .5),
+    0 0 30px rgba(33, 156, 243, .5),
+    inset 0 0 10px rgba(33, 156, 243, .5);
 }
