@@ -425,3 +425,35 @@ keysBoard.forEach((el) => {
 
   keyboard.append(elementKey);
 });
+
+window.addEventListener("keydown", (event) => {
+  event.preventDefault();
+
+  const keyPress = document.querySelector(`.${event.code}`);
+  if (keyPress) {
+    if (!keyPress.classList.contains("active")) {
+      keyPress.classList.add("active");
+    }
+
+    if (event.code === "CapsLock") {
+      switchCaps(event.code);
+    } else {
+      enterKeys(keyPress.dataset.key);
+    }
+  }
+});
+
+window.addEventListener("keyup", (event) => {
+  event.preventDefault();
+
+  const keyPress = document.querySelector(`.${event.code}`);
+  if (keyPress) {
+    if (event.code !== "CapsLock") {
+      keyPress?.classList.remove("active");
+    } else {
+      if (!properties.isCaps) {
+        keyPress.classList.remove("active");
+      }
+    }
+  }
+});
