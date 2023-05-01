@@ -310,9 +310,31 @@ rootElement.append(header);
 rootElement.append(sectionElement);
 bodyElement.append(rootElement);
 
-const keysBoard = keys.sort(
-  (a, b) => keyLayout.indexOf(a.key) - keyLayout.indexOf(b.key)
-);
+const enterKeys = (key) => {
+  switch (key) {
+    case "Backspace":
+      textarea.value = textarea.value.slice(0, -1);
+      break;
+    case "Tab":
+      textarea.value += "    ";
+      break;
+    case "Enter":
+      textarea.value += "\n";
+      break;
+    case "ControlLeft":
+    case "ControlRight":
+    case "ShiftLeft":
+    case "ShiftRight":
+    case "CapsLock":
+    case "Del":
+    case "AltLeft":
+    case "AltRight":
+    case "Win":
+      break;
+    default:
+      textarea.value += key;
+  }
+};
 
 const setKey = (element, key) => {
   let keySymbol = key;
@@ -335,12 +357,27 @@ const setKey = (element, key) => {
   element.innerText = keySymbol;
 };
 
+const keysBoard = keys.sort(
+  (a, b) => keyLayout.indexOf(a.key) - keyLayout.indexOf(b.key)
+);
+
 keysBoard.forEach((el) => {
   const { key, code } = el;
   const elementKey = document.createElement("div");
   elementKey.classList.add("keyItem");
-  setKey(elementKey, key);
   elementKey.setAttribute("data-key", key);
   elementKey.classList.add(code);
+
+  setKey(elementKey, key);
+
+  elementKey.addEventListener("mousedown", (event) => {
+    event.target.classList.add("active");
+    enterKeys(key);
+  });
+
+  elementKey.addEventListener("mouseup", (event) => {
+    event.target.classList.remove("active");
+  });
+
   keyboard.append(elementKey);
 });
