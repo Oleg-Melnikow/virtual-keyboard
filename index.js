@@ -56,7 +56,7 @@ const keys = [
     code: "ArrowLeft",
   },
   {
-    key: "▼",
+    key: "▲",
     code: "ArrowUp",
   },
   {
@@ -64,7 +64,7 @@ const keys = [
     code: "ArrowRight",
   },
   {
-    key: "▲",
+    key: "▼",
     code: "ArrowDown",
   },
   {
