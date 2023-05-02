@@ -300,6 +300,7 @@ const keys = [
     code: "Backquote",
     shift: "~",
     keyRu: "ё",
+    shiftRu: "Ё",
   },
   {
     key: "[",
@@ -452,7 +453,6 @@ const switchCaps = (key) => {
 
 const shiftPress = (isShift, code) => {
   const keysShift = [...document.querySelectorAll(".keyItem-shift")];
-  console.log(properties.currentLanguage);
   keysShift.forEach((item) => {
     const shiftLang =
       properties.currentLanguage === "en"
@@ -485,13 +485,12 @@ const onMouseUp = (key, event, code) => {
 
 const changeLang = () => {
   const itemsLang = [...document.querySelectorAll(".keyItem-ru")];
-  console.log(properties.currentLanguage);
   itemsLang.forEach((el) => {
     const item =
       properties.currentLanguage === "en"
         ? el?.dataset?.keyru || el?.dataset?.key
         : el?.dataset?.key;
-    el.innerHTML = item;
+    el.innerHTML = properties.isCaps ? item.toUpperCase() : item.toLowerCase();
   });
 };
 
